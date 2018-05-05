@@ -1,0 +1,17 @@
+{
+    "type": "iod.config.base",
+    "options": {
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "packages": {
+                            "type": "iod.packages"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

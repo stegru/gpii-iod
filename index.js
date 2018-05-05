@@ -26,21 +26,15 @@ fluid.module.register("gpii-iod", __dirname, require);
 var iod = fluid.registerNamespace("iod");
 
 
-require("./admin");
 require("./package-api");
+require("./admin");
 
+fluid.defaults("iod.packageDataSource", {
+    gradeNames: "kettle.dataSource"
+});
 
 // Taken from universal:/index.js:
 
-
-// iod.loadTestingSupport = function () {
-//     fluid.contextAware.makeChecks({
-//         "iod.contexts.test": {
-//             value: true
-//         }
-//     });
-//     require("./iod/node_modules/testing");
-// };
 
 /**
  * Query and fetch the array of configs for this IoD Kettle Server.

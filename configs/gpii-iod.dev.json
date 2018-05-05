@@ -2,18 +2,27 @@
     "type": "iod.config.dev",
     "options": {
         "gradeNames": ["fluid.component"],
-        "components": {
+        "distributeOptions": {
+            "iod.packageDataSource.moduleTerms": {
+                "record": "kettle.dataSource.file.moduleTerms",
+                "target": "{that packageDataSource}.options.gradeNames"
+            },
+            "iod.packageDataSource": {
+                "record": {
+                    "path": "%gpii-iod/testData/packageData/%packageName.json",
+                    "termMap": {
+                        "packageName": "%packageName"
+                    }
+                },
+                "target": "{that packageDataSource}.options"
+            },
             "server": {
-                "type": "kettle.server",
-                "options": {
-                    "components": {
-                        "packages": {
-                            "type": "iod.packages"
-                        }
-                    },
-                    "port": 8084
-                }
+                "record": 8084,
+                "target": "{that server}.options.port"
             }
         }
-    }
+    },
+    "mergeConfigs": [
+        "%gpii-iod/configs/gpii-iod.base.json"
+    ]
 }

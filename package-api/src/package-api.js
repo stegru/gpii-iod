@@ -1,5 +1,5 @@
 /*
- * IoD package data API.
+ * IoD packages external API.
  *
  * Copyright 2018 Raising the Floor - International
  *
@@ -32,6 +32,14 @@ fluid.defaults("iod.packages", {
             method: "get",
             type: "iod.packages.handler"
         }
+    },
+    components: {
+        "packageDataSource": {
+            type: "iod.packageDataSource",
+            options: {
+                "readOnlyGrade": "iod.packageDataSource"
+            }
+        }
     }
 });
 
@@ -40,13 +48,24 @@ fluid.defaults("iod.packages.handler", {
     invokers: {
         handleRequest: {
             funcName: "iod.packages.handleRequest",
-            args: [ "{request}", "{request}.req.params.packageName"]
+            args: [
+                "{packages}", "{request}", "{request}.req.params.packageName", "{request}.req.params.lang"
+            ]
         }
     }
 });
 
+iod.packages.handleRequest = function (packages, request, packageName) {
+    fluid.log("package requested: " + packageName);
+    packages.packageDataSource.get({packageName: packageName}).then(function (packageInfo) {
+        request.events.onSuccess.fire("Got package:" + JSON.stringify(packageInfo));
+    }, function (err) {
+        fluid.log(err);
 
-iod.packages.handleRequest = function (request, packageName) {
-    request.events.onSuccess.fire("package requested: " + packageName);
+        request.events.onError.fire({
+            message: "No such package",
+            statusCode: err.statusCode || 404
+        });
+    });
 };
 
