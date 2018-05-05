@@ -1,0 +1,22 @@
+{
+    "type": "iod.config.dev",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "packages": {
+                            "type": "iod.packages"
+                        }
+                    },
+                    "port": {
+                        "port": 18084,
+                        "host": "127.0.0.1"
+                    }
+                }
+            }
+        }
+    }
+}

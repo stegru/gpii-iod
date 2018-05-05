@@ -17,3 +17,71 @@
  */
 
 "use strict";
+
+var fluid = require("infusion"),
+    kettle = require("kettle");
+
+fluid.module.register("gpii-iod", __dirname, require);
+
+var iod = fluid.registerNamespace("iod");
+
+
+require("./admin");
+require("./package-api");
+
+
+// Taken from universal:/index.js:
+
+
+// iod.loadTestingSupport = function () {
+//     fluid.contextAware.makeChecks({
+//         "iod.contexts.test": {
+//             value: true
+//         }
+//     });
+//     require("./iod/node_modules/testing");
+// };
+
+/**
+ * Query and fetch the array of configs for this IoD Kettle Server.
+ *
+ * @return {Array} The array of Kettle config instances. In most situations
+ *     there is only one.
+ */
+iod.queryConfigs = function () {
+    return fluid.queryIoCSelector(fluid.rootComponent, "kettle.config");
+};
+
+/**
+ * Starts the IoD server using the default development configuration
+ * or if provided a custom config. Accepts an options block
+ * that allows specifying the configuration name and directory
+ * of configurations.
+ *
+ * @param options {Object} Accepts the following options:
+ *   - configName {String} Name of a configuration to use, specified by the name
+ *     of the file without the .json extension.
+ *   - configPath {String} Directory of the configuration json files.
+ */
+iod.start = function (options) {
+    options = options || {};
+    var configName = options.configName || "gpii-iod.dev";
+    var configPath = options.configPath || __dirname + "/configs";
+    kettle.config.loadConfig({
+        configName: kettle.config.getConfigName(configName),
+        configPath: kettle.config.getConfigPath(configPath)
+    });
+};
+
+/**
+ * Stops the IoD instance that was started with iod.start()
+ */
+iod.stop = function () {
+    var configs = iod.queryConfigs();
+    fluid.each(configs, function (config) {
+        config.destroy();
+    });
+};
+
+module.exports = fluid;
+
