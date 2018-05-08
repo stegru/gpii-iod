@@ -21,7 +21,8 @@
 var fluid = fluid || require("infusion");
 var iod = fluid.registerNamespace("iod");
 
-var child_process = require("child_process");
+var child_process = require("child_process"),
+    os = require("os");
 
 
 fluid.defaults("iod.packages.publish", {
@@ -51,18 +52,29 @@ fluid.defaults("iod.packages.publish", {
  * @param that {Component} The iod.packages.publish instance.
  * @param port {number} The tcp port on which the service is listening. The environment variable GPII_IOD_PORT will
  * override this (like for when external connectivity is provided by nginx).
+ * @param url {string} [optional] The url for the service.
  */
-iod.packages.publishService = function (that, port) {
+iod.packages.publishService = function (that, port, url) {
     if (process.env.GPII_IOD_PORT) {
         port = process.env.GPII_IOD_PORT;
     } else if (port && port.port) {
         port = port.port;
     }
 
+    url = url || process.env.GPII_IOD_URL;
+
     var serviceName = "GPII IoD Service";
     var serviceType = "_gpii-iod._tcp";
 
-    that.avahiChild = child_process.execFile("avahi-publish", [ "--service", serviceName, serviceType, port ]);
+    var args = [ "--service", serviceName, serviceType, port ];
+
+    if (!url) {
+        url = "http://" + os.hostname() + ":" + port;
+    }
+
+    args.push("url=" + url);
+
+    that.avahiChild = child_process.execFile("avahi-publish", args);
     that.avahiChild.on("error", function (err) {
         fluid.log("avahi:", err);
     });
