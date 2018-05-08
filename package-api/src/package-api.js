@@ -39,6 +39,9 @@ fluid.defaults("iod.packages", {
             options: {
                 "readOnlyGrade": "iod.packageDataSource"
             }
+        },
+        "publish": {
+            type: "iod.packages.publish"
         }
     }
 });
@@ -58,7 +61,7 @@ fluid.defaults("iod.packages.handler", {
 iod.packages.handleRequest = function (packages, request, packageName) {
     fluid.log("package requested: " + packageName);
     packages.packageDataSource.get({packageName: packageName}).then(function (packageInfo) {
-        request.events.onSuccess.fire("Got package:" + JSON.stringify(packageInfo));
+        request.events.onSuccess.fire(packageInfo);
     }, function (err) {
         fluid.log(err);
 

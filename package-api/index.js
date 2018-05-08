@@ -19,5 +19,6 @@
 "use strict";
 
 require("./src/package-api.js");
+require("./src/publish.js");
 
 

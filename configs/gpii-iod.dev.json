@@ -16,9 +16,9 @@
                 },
                 "target": "{that packageDataSource}.options"
             },
-            "server": {
-                "record": 8084,
-                "target": "{that server}.options.port"
+            "iodServer": {
+                "record": 8087,
+                "target": "{that iodServer}.options.port"
             }
         }
     },

@@ -2,7 +2,7 @@
     "type": "iod.config.base",
     "options": {
         "components": {
-            "server": {
+            "iodServer": {
                 "type": "kettle.server",
                 "options": {
                     "components": {

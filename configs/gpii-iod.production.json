@@ -16,12 +16,12 @@
                 },
                 "target": "{that packageDataSource}.options"
             },
-            "server": {
+            "iodServer": {
                 "record": {
-                    "port": 18084,
+                    "port": 18087,
                     "host": "127.0.0.1"
                 },
-                "target": "{that server}.options.port"
+                "target": "{that iodServer}.options.port"
             }
         }
     },

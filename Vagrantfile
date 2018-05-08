@@ -15,8 +15,8 @@ app_start_script = vars["nodejs_app_start_script"]
 # Check for the existence of the 'VM_HOST_TCP_PORT' environment variable. If it
 # doesn't exist and 'nodejs_app_tcp_port' is defined in vars.yml then use that
 # port. Failing that use defaults provided in this file.
-host_tcp_port = ENV["VM_HOST_TCP_PORT"] || vars["nodejs_app_tcp_port"] || 8084
-guest_tcp_port = vars["nodejs_app_tcp_port"] || 8084
+host_tcp_port = ENV["VM_HOST_TCP_PORT"] || vars["nodejs_app_tcp_port"] || 8087
+guest_tcp_port = vars["nodejs_app_tcp_port"] || 8087
 
 # By default this VM will use 2 processor cores and 2GB of RAM. The 'VM_CPUS' and
 # "VM_RAM" environment variables can be used to change that behaviour.
@@ -72,4 +72,5 @@ Vagrant.configure(2) do |config|
   SHELL
 
 
+  config.vm.network "public_network", bridge: "eno1"
 end
