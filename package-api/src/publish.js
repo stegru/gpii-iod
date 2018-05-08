@@ -49,10 +49,10 @@ fluid.defaults("iod.packages.publish", {
 /**
  * Publish the IoD service for clients to know how to connect.
  *
- * @param that {Component} The iod.packages.publish instance.
- * @param port {number} The tcp port on which the service is listening. The environment variable GPII_IOD_PORT will
+ * @param {Component} that The iod.packages.publish instance.
+ * @param {number} port The tcp port on which the service is listening. The environment variable GPII_IOD_PORT will
  * override this (like for when external connectivity is provided by nginx).
- * @param url {string} [optional] The url for the service.
+ * @param {string} url [optional] The url for the service.
  */
 iod.packages.publishService = function (that, port, url) {
     if (process.env.GPII_IOD_PORT) {
@@ -86,7 +86,7 @@ iod.packages.publishService = function (that, port, url) {
 /**
  * Stop publishing the IoD service.
  *
- * @param that {Component} The iod.packages.publish instance.
+ * @param {Component} that The iod.packages.publish instance.
  */
 iod.packages.unpublishService = function (that) {
     if (that.avahiChild) {

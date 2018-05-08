@@ -52,7 +52,7 @@ iod.queryConfigs = function () {
  * that allows specifying the configuration name and directory
  * of configurations.
  *
- * @param options {Object} Accepts the following options:
+ * @param {Object} options Accepts the following options:
  *   - configName {String} Name of a configuration to use, specified by the name
  *     of the file without the .json extension.
  *   - configPath {String} Directory of the configuration json files.
