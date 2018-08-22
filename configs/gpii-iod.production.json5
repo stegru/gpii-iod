@@ -9,7 +9,7 @@
             },
             "iod.packageDataSource": {
                 "record": {
-                    "path": "%gpii-iod/testData/packageData/%packageName.json",
+                    "path": "%gpii-iod/testData/packageData/%packageName.json5",
                     "termMap": {
                         "packageName": "%packageName"
                     }
@@ -17,12 +17,15 @@
                 "target": "{that packageDataSource}.options"
             },
             "iodServer": {
-                "record": 8087,
+                "record": {
+                    "port": 18087,
+                    "host": "127.0.0.1"
+                },
                 "target": "{that iodServer}.options.port"
             }
         }
     },
     "mergeConfigs": [
-        "%gpii-iod/configs/gpii-iod.base.json"
+        "%gpii-iod/configs/gpii-iod.base.json5"
     ]
 }
