@@ -19,13 +19,13 @@
 "use strict";
 
 var fluid = fluid || require("infusion");
-var iod = fluid.registerNamespace("iod");
+var iod = fluid.registerNamespace("gpii.iod");
 
 var child_process = require("child_process"),
     os = require("os");
 
 
-fluid.defaults("iod.packages.publish", {
+fluid.defaults("gpii.iod.packages.publish", {
     gradeNames: "fluid.component",
     listeners: {
         "{iodServer}.events.onListen": "{that}.publishService",
@@ -33,11 +33,11 @@ fluid.defaults("iod.packages.publish", {
     },
     invokers: {
         publishService: {
-            funcName: "iod.packages.publishService",
+            funcName: "gpii.iod.packages.publishService",
             args: [ "{that}", "{iodServer}.options.port"]
         },
         unpublishService: {
-            funcName: "iod.packages.unpublishService",
+            funcName: "gpii.iod.packages.unpublishService",
             args: [ "{that}", "{packages}"]
         }
     },

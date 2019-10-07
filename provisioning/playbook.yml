@@ -1,14 +1,67 @@
 ---
-- hosts: localhost
+- hosts: "{{ target_host | default('localhost') }}"
   user: root
 
   vars_files:
     # The Dockerfile, Vagrantfile or other means of running the playbook
     # must set the UNIVERSAL_VARS_FILE variable appropriately for its
-    # environment    
+    # environment
     - "{{ lookup('env', 'UNIVERSAL_VARS_FILE') }}"
     - vars.yml
+
+  pre_tasks:
+
+    - name: Copy application
+      import_tasks: tasks/app-copy.yml
+      tags: [deploy,update]
+
+    - name: Generate a temporary cert for nginx
+      import_tasks: tasks/selfsigned-cert.yml
+      tags: [install]
 
   roles:
     - facts
     - nodejs
+    - role: nginx
+      tags: [install]
+
+  tasks:
+
+    - name: Configure iod-server
+      import_tasks: tasks/app-config.yml
+      tags: [configure]
+
+    - name: Install certbot
+      yum:
+        name: certbot
+        state: latest
+      tags: [install]
+
+    - name: Apply firewall rules
+      import_tasks: tasks/firewall.yml
+      when: is_vagrant is undefined
+      tags: [install]
+
+    - name: Fix nginx pid file
+      file:
+        path: /var/run/nginx.pid
+        state: absent
+      tags: [install]
+
+    - name: Start nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+      tags: [install]
+
+    - name: Restart application
+      systemd:
+        name: "{{ nodejs_app_name }}"
+        state: restarted
+        enabled: yes
+      tags: [install,update]
+
+
+
+

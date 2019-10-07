@@ -6,9 +6,13 @@
     "bugs": "http://issues.gpii.net/browse/GPII",
     "homepage": "http://gpii.net/",
     "dependencies": {
+        "express-session": "^1.16.2",
+        "gpii-express": "^1.0.15",
+        "gpii-handlebars": "^1.1.4",
         "infusion": "3.0.0-dev.20180222T160835Z.6e1311a",
-        "json5": "0.5.1",
-        "kettle": "1.7.1"
+        "json5": "^2.1.0",
+        "kettle": "^1.11.0",
+        "memorystore": "^1.6.1"
     },
     "devDependencies": {
         "node-jqunit": "1.1.8"

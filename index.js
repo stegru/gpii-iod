@@ -21,20 +21,16 @@
 var fluid = require("infusion"),
     kettle = require("kettle");
 
-fluid.module.register("gpii-iod", __dirname, require);
+fluid.module.register("gpii-iod-server", __dirname, require);
 
-var iod = fluid.registerNamespace("iod");
-
+var iod = fluid.registerNamespace("gpii.iod");
 
 require("./package-api");
 require("./admin");
 
-fluid.defaults("iod.packageDataSource", {
+fluid.defaults("gpii.iod.packageDataSource", {
     gradeNames: "kettle.dataSource"
 });
-
-// Taken from universal:/index.js:
-
 
 /**
  * Query and fetch the array of configs for this IoD Kettle Server.

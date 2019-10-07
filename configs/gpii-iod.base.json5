@@ -1,5 +1,5 @@
 {
-    "type": "iod.config.base",
+    "type": "gpii.iod.config.base",
     "options": {
         "components": {
             "iodServer": {
@@ -7,10 +7,13 @@
                 "options": {
                     "components": {
                         "packages": {
-                            "type": "iod.packages"
+                            "type": "gpii.iod.packages"
                         }
                     }
                 }
+            },
+            "adminSite": {
+                "type": "gpii.iod.admin"
             }
         }
     }

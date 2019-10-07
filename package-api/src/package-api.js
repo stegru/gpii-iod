@@ -19,38 +19,38 @@
 "use strict";
 
 var fluid = fluid || require("infusion");
-var iod = fluid.registerNamespace("iod");
+var iod = fluid.registerNamespace("gpii.iod");
 require("kettle");
 
 
-fluid.defaults("iod.packages", {
+fluid.defaults("gpii.iod.packages", {
     gradeNames: "kettle.app",
     serverUrl: "http://localhost",
     requestHandlers: {
         packages: {
             route: "/packages/:packageName",
             method: "get",
-            type: "iod.packages.handler"
+            type: "gpii.iod.packages.handler"
         }
     },
     components: {
         "packageDataSource": {
-            type: "iod.packageDataSource",
+            type: "gpii.iod.packageDataSource",
             options: {
-                "readOnlyGrade": "iod.packageDataSource"
+                "readOnlyGrade": "gpii.iod.packageDataSource"
             }
         },
         "publish": {
-            type: "iod.packages.publish"
+            type: "gpii.iod.packages.publish"
         }
     }
 });
 
-fluid.defaults("iod.packages.handler", {
+fluid.defaults("gpii.iod.packages.handler", {
     gradeNames: ["kettle.request.http"],
     invokers: {
         handleRequest: {
-            funcName: "iod.packages.handleRequest",
+            funcName: "gpii.iod.packages.handleRequest",
             args: [
                 "{packages}", "{request}", "{request}.req.params.packageName", "{request}.req.params.lang"
             ]

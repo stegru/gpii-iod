@@ -6,3 +6,6 @@
 # /node_modules directory of the host machine to a different directory than the VirtualBox shared folder.
 - src: https://github.com/idi-ops/ansible-nodejs
   name: nodejs
+
+- src: https://github.com/nginxinc/ansible-role-nginx
+  name: nginx

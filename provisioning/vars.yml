@@ -1,18 +1,27 @@
 ---
 # Common variables for universal shared between both
 # Docker and Vagrant builds
+
+
+# where the writable config is put
+iod_config_root: /var/gpii-iod
+iod_config_dir: "{{ iod_config_root }}/app"
+
+
+##
 # Please refer to https://github.com/idi-ops/ansible-nodejs/blob/master/defaults/main.yml
 # for documentation related to these variables
-
 nodejs_app_name: gpii-iod
-
-nodejs_app_tcp_port: 8087
+nodejs_app_tcp_port: 18090
+nodejs_app_env_vars:
+  - NODE_ENV=gpii-iod.production
 
 # Currently Node.js 6.x LTS is required by Universal
 nodejs_branch: lts
 
 # If a specific Node.js version is needed, specify it here. If not defined, defaults to the latest within the branch.
-#nodejs_version: 4.x.y
+nodejs_version: 10.16.3
+
 
 # If a specific npm version is needed, specify it here
 #nodejs_npm_version: 2.15.1
@@ -20,3 +29,32 @@ nodejs_branch: lts
 nodejs_app_start_script: iod.js
 
 nodejs_app_git_clone: false
+
+
+##
+# nginx config
+#
+nginx_enable: true
+nginx_start: false
+
+ssl_path: /etc/ssl/private
+ssl_hostname: localhost
+ssl_file_prefix: "{{ ssl_path }}/{{ ssl_hostname }}."
+
+nginx_debug_output: true
+
+# Upload the main nginx config
+nginx_main_template_enable: true
+nginx_main_template:
+  template_file: "{{ playbook_dir }}/templates/nginx.conf"
+  conf_file_name: default.conf
+  conf_file_location: /etc/nginx/conf.d/
+
+# Upload the http nginx config
+nginx_http_template_enable: true
+nginx_http_template:
+  default:
+    template_file: "{{ playbook_dir }}/templates/iod.nginx.conf"
+    conf_file_name: default.conf
+    conf_file_location: /etc/nginx/conf.d/
+

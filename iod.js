@@ -19,6 +19,6 @@
 "use strict";
 
 var fluid = require("./index.js"),
-    iod = fluid.registerNamespace("iod");
+    iod = fluid.registerNamespace("gpii.iod");
 
 iod.start();

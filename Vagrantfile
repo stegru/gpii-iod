@@ -15,13 +15,13 @@ app_start_script = vars["nodejs_app_start_script"]
 # Check for the existence of the 'VM_HOST_TCP_PORT' environment variable. If it
 # doesn't exist and 'nodejs_app_tcp_port' is defined in vars.yml then use that
 # port. Failing that use defaults provided in this file.
-host_tcp_port = ENV["VM_HOST_TCP_PORT"] || vars["nodejs_app_tcp_port"] || 8087
-guest_tcp_port = vars["nodejs_app_tcp_port"] || 8087
+host_tcp_port = ENV["VM_HOST_TCP_PORT"] || 8090
+guest_tcp_port = 443
 
 # By default this VM will use 2 processor cores and 2GB of RAM. The 'VM_CPUS' and
 # "VM_RAM" environment variables can be used to change that behaviour.
 cpus = ENV["VM_CPUS"] || 2
-ram = ENV["VM_RAM"] || 2048
+ram = ENV["VM_RAM"] || 1024
 
 Vagrant.configure(2) do |config|
 
@@ -68,8 +68,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo ansible-galaxy install -fr #{app_directory}/provisioning/requirements.yml
-    sudo UNIVERSAL_VARS_FILE=vagrant-vars.yml PYTHONUNBUFFERED=1 ansible-playbook #{app_directory}/provisioning/playbook.yml --tags="install,configure" --inventory="localhost ansible_connection=local,"
-    yum -y install avahi-tools
+    sudo UNIVERSAL_VARS_FILE=vagrant-vars.yml PYTHONUNBUFFERED=1 ansible-playbook #{app_directory}/provisioning/playbook.yml --tags="install,configure,deploy" --inventory="localhost ansible_connection=local,"
+    #yum -y install avahi-tools
   SHELL
 
 
