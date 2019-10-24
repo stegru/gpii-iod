@@ -1,0 +1,19 @@
+- name: "Create the config directory"
+  file:
+    path: "{{ iod_config_root }}"
+    owner: "root"
+    group: "root"
+    mode: '0755'
+    state: directory
+
+- name: "Create the application config directory"
+  file:
+    path: "{{ iod_config_dir }}"
+    # contains passwords
+    mode: 'g-rwx,o-rwx'
+    owner: "{{ nodejs_app_dev_username if is_vagrant else nodejs_app_username }}"
+    group: "{{ nodejs_app_dev_username if is_vagrant else nodejs_app_username }}"
+    recurse: true
+    state: directory
+
+

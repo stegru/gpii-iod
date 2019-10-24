@@ -1,0 +1,30 @@
+
+# Copy the application onto the remote host.
+
+# Check the destination isn't mounted/synced with the source.
+# If .git is found in the destination, then assume it's the same directory as the source, as .git doesn't get copied.
+- name: Checking if the app directory is synced
+  stat:
+    path: "{{ nodejs_app_install_dir }}/.git"
+  register: git_dir_result
+
+- name: Installing rsync
+  yum:
+    name: rsync
+
+- name: Make sure the application directory exists
+  file:
+    # Permissions are set by the nodejs role
+    path: "{{ nodejs_app_install_dir }}"
+    state: directory
+  when: not git_dir_result.stat.exists
+
+- name: Copying application
+  synchronize:
+    src: "{{ playbook_dir }}/../"
+    dest: "{{ nodejs_app_install_dir }}"
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=node_modules"
+  when: not git_dir_result.stat.exists
+

@@ -1,0 +1,32 @@
+# Some firewall rules
+
+
+- name: Opening port for http
+  firewalld:
+    port: 80/tcp
+    permanent: yes
+    state: enabled
+
+- name: Opening port for https
+  firewalld:
+    port: 443/tcp
+    permanent: yes
+    state: enabled
+
+- name: Opening port for DNS (TCP)
+  firewalld:
+    port: 53/tcp
+    permanent: yes
+    state: enabled
+
+- name: Opening port for DNS (UDP)
+  firewalld:
+    port: 53/udp
+    permanent: yes
+    state: enabled
+
+- name: Allow nginx to connect to things (reverse proxy)
+  command: setsebool httpd_can_network_connect on -P
+
+- name: Reload firewalld
+  command: firewall-cmd --reload
