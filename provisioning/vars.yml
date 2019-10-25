@@ -38,7 +38,7 @@ nginx_enable: true
 nginx_start: false
 
 ssl_path: /etc/ssl/private
-ssl_hostname: localhost
+ssl_hostname: vagrant.iod-test.net
 ssl_file_prefix: "{{ ssl_path }}/{{ ssl_hostname }}."
 
 nginx_debug_output: true

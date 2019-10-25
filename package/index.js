@@ -18,7 +18,9 @@
 
 "use strict";
 
-require("./src/package-api.js");
-require("./src/publish.js");
+
+require("./src/packageDataSource.js");
+require("./src/packageServer.js");
+require("./src/packageFile.js");
 
 

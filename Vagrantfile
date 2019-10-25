@@ -47,8 +47,9 @@ Vagrant.configure(2) do |config|
 
   # Port forwarding takes place here. The 'guest' port is used inside the VM
   # whereas the 'host' port is used by your host operating system.
-  config.vm.network "forwarded_port", guest: guest_tcp_port, host: host_tcp_port, protocol: "tcp",
-    auto_correct: true
+  config.vm.network "forwarded_port", guest: guest_tcp_port, host: host_tcp_port, protocol: "tcp", auto_correct: true
+
+  config.vm.network "private_network", ip: "10.44.0.2"
 
   # Port 19531 is needed so logs can be viewed using systemd-journal-gateway
   #config.vm.network "forwarded_port", guest: 19531, host: 19531, protocol: "tcp",
@@ -73,5 +74,5 @@ Vagrant.configure(2) do |config|
   SHELL
 
 
-  config.vm.network "public_network", bridge: "eno1"
+  #config.vm.network "public_network", bridge: "eno1"
 end

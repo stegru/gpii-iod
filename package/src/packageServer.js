@@ -26,6 +26,9 @@ require("kettle");
 fluid.defaults("gpii.iod.packages", {
     gradeNames: "kettle.app",
     serverUrl: "http://localhost",
+
+    packageDirectory: undefined,
+
     requestHandlers: {
         packages: {
             route: "/packages/:packageName",
