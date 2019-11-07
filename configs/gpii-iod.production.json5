@@ -3,19 +3,6 @@
     "options": {
         "gradeNames": ["fluid.component"],
         "distributeOptions": {
-            "gpii.iod.packageDataSource.moduleTerms": {
-                "record": "kettle.dataSource.file.moduleTerms",
-                "target": "{that packageDataSource}.options.gradeNames"
-            },
-            "gpii.iod.packageDataSource": {
-                "record": {
-                    "path": "%gpii-iod/testData/packageData/%packageName.json5",
-                    "termMap": {
-                        "packageName": "%packageName"
-                    }
-                },
-                "target": "{that packageDataSource}.options"
-            },
             "iodServer": {
                 "record": {
                     "port": 18090,

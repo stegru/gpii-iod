@@ -6,14 +6,20 @@
                 "type": "kettle.server",
                 "options": {
                     "components": {
-                        "packages": {
-                            "type": "gpii.iod.packages"
+                        "packageServer": {
+                            "type": "gpii.iod.packageServer"
                         }
                     }
                 }
             },
             "adminSite": {
                 "type": "gpii.iod.admin"
+            }
+        },
+        "distributeOptions": {
+            "packageDataSource": {
+                target: "{that gpii.iod.packageDataSource}.options.packageDirectory",
+                record: "%gpii-iod-server/testData/packages"
             }
         }
     }

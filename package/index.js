@@ -18,7 +18,6 @@
 
 "use strict";
 
-
 require("./src/packageDataSource.js");
 require("./src/packageServer.js");
 require("./src/packageFile.js");

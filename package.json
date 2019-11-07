@@ -15,7 +15,8 @@
         "memorystore": "^1.6.1"
     },
     "devDependencies": {
-        "node-jqunit": "1.1.8"
+        "node-jqunit": "1.1.8",
+        "rimraf": "^3.0.0"
     },
     "license": "BSD-3-Clause",
     "keywords": [

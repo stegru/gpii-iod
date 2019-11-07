@@ -25,8 +25,8 @@ fluid.module.register("gpii-iod-server", __dirname, require);
 
 var iod = fluid.registerNamespace("gpii.iod");
 
-require("./package");
-require("./admin");
+require("./package/");
+require("./admin/");
 
 /**
  * Query and fetch the array of configs for this IoD Kettle Server.

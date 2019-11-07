@@ -121,7 +121,7 @@ jqUnit.asyncTest("Hash file", function () {
             }
 
             var promise = fluid.promise();
-            gpii.packageFile.hashFile(testFile, test.algorithm).then(function (result) {
+            gpii.iod.packageFile.hashFile(testFile, test.algorithm).then(function (result) {
                 var expect;
                 if (test.expect === "hash") {
                     expect = crypto.createHash(test.algorithm || "sha512")
@@ -189,7 +189,7 @@ jqUnit.test("testing readPEM", function () {
 
     fluid.each(tests, function (inputs, expect) {
         fluid.each(inputs, function (input, index) {
-            var result = gpii.packageFile.readPEM(input);
+            var result = gpii.iod.packageFile.readPEM(input);
             var suffix = " - expect=" + expect + ", index=" + index;
             if (expect === "invalid") {
                 jqUnit.assertNull("readPEM should return null for invalid data" + suffix, result);
@@ -203,7 +203,7 @@ jqUnit.test("testing readPEM", function () {
     });
 
     // Try a real key
-    var result2 = gpii.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
+    var result2 = gpii.iod.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
 
     // Rather than hard-code the entire key (or re-implement readPEM here), just verify it with a hash.
     var md5 = crypto.createHash("md5").update(result2).digest("hex");
@@ -216,7 +216,7 @@ jqUnit.test("Signing Package data", function () {
 
     var packageData = gpii.tests.iod.packageFile.testData.packageData;
 
-    var signed = gpii.packageFile.signPackageData(packageData, gpii.tests.iod.packageFile.testKey);
+    var signed = gpii.iod.packageFile.signPackageData(packageData, gpii.tests.iod.packageFile.testKey);
 
     // Check the public key has been added to the payload.
     var signedJson = signed.buffer.toString();
@@ -224,7 +224,7 @@ jqUnit.test("Signing Package data", function () {
     var signedObject = JSON.parse(signedJson);
 
     // Check the publicKey field
-    var expectedKey = gpii.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
+    var expectedKey = gpii.iod.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
     var actualKey = Buffer.from(signedObject.publicKey, "base64");
 
     jqUnit.assertDeepEq("publicKey field in the signed data should be correct",
@@ -239,7 +239,7 @@ jqUnit.test("Signing Package data", function () {
 });
 
 gpii.tests.iod.packageFile.createSamplePackage = function (packageFile) {
-    return gpii.packageFile.create(gpii.tests.iod.packageFile.testData.packageData,
+    return gpii.iod.packageFile.create(gpii.tests.iod.packageFile.testData.packageData, null,
         gpii.tests.iod.packageFile.testKey, packageFile);
 };
 
@@ -252,11 +252,11 @@ jqUnit.asyncTest("Create a simple package file", function () {
 
         var data = fs.readFileSync(packageFile);
 
-        var fileId = data.toString("ascii", 0, gpii.packageFile.fileIdentity.length);
+        var fileId = data.toString("ascii", 0, gpii.iod.packageFile.fileIdentity.length);
         jqUnit.assertEquals("Package file should start with the file identifier",
-            gpii.packageFile.fileIdentity, fileId);
+            gpii.iod.packageFile.fileIdentity, fileId);
 
-        var offset = gpii.packageFile.fileIdentity.length;
+        var offset = gpii.iod.packageFile.fileIdentity.length;
         var intSize = 4;
 
         var packageDataLength = data.readUInt32LE(offset);
@@ -273,7 +273,7 @@ jqUnit.asyncTest("Create a simple package file", function () {
         jqUnit.assertEquals("installerLength value should be zero (installer wasn't given)", 0, installerLength);
 
         // Check the size of the file compared to the header values
-        var totalSize = gpii.packageFile.headerLength + packageDataLength + signatureLength + installerLength;
+        var totalSize = gpii.iod.packageFile.headerLength + packageDataLength + signatureLength + installerLength;
         var fileStats = fs.statSync(packageFile);
         jqUnit.assertEquals("File size should match what the header suggests", fileStats.size, totalSize);
 
@@ -284,7 +284,7 @@ jqUnit.asyncTest("Create a simple package file", function () {
         var packageDataJson = packageDataBuffer.toString();
         var packageDataObject = JSON.parse(packageDataJson);
 
-        var expectedKey = gpii.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
+        var expectedKey = gpii.iod.packageFile.readPEM(gpii.tests.iod.packageFile.testKey.publicKey);
         var actualKey = Buffer.from(packageDataObject.publicKey, "base64");
 
         jqUnit.assertDeepEq("package data should contain the publicKey",
@@ -308,7 +308,7 @@ gpii.tests.iod.packageFile.checkPackageFileInfo = function (packageFile, package
     // Check the header
     var header = packageFileInfo.header;
 
-    jqUnit.assertEquals("header.identity", gpii.packageFile.fileIdentity, header.identity);
+    jqUnit.assertEquals("header.identity", gpii.iod.packageFile.fileIdentity, header.identity);
 
     jqUnit.assertEquals("header.packageDataLength and buffer length should match",
         Buffer.from(packageFileInfo.packageDataJson).length, header.packageDataLength);
@@ -342,7 +342,7 @@ jqUnit.asyncTest("Read a simple package file", function () {
     tempFiles.push(packageFile);
 
     gpii.tests.iod.packageFile.createSamplePackage(packageFile).then(function () {
-        gpii.packageFile.read(packageFile).then(function (packageFileInfo) {
+        gpii.iod.packageFile.read(packageFile).then(function (packageFileInfo) {
 
             jqUnit.assertFalse("package fd should not be returned", packageFileInfo.hasOwnProperty("fd"));
 
@@ -374,11 +374,10 @@ jqUnit.asyncTest("Create a package file with an installer", function () {
     fs.writeFileSync(installerFile, "installer payload");
 
     var packageData = fluid.copy(gpii.tests.iod.packageFile.testData.packageData);
-    packageData.$installerSource = installerFile;
 
-    gpii.packageFile.create(packageData, gpii.tests.iod.packageFile.testKey, packageFile).then(function () {
+    gpii.iod.packageFile.create(packageData, installerFile, gpii.tests.iod.packageFile.testKey, packageFile).then(function () {
         // Read the output file
-        var readPromise = gpii.packageFile.read(packageFile, {
+        var readPromise = gpii.iod.packageFile.read(packageFile, {
             keepOpen: true
         });
 
