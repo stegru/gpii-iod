@@ -11,6 +11,12 @@
 
   pre_tasks:
 
+    - name: Enable the EPEL repository (for certbot)
+      yum:
+        name: epel-release
+        state: latest
+      tags: [install]
+
     - name: Copy application
       import_tasks: tasks/app-copy.yml
       tags: [deploy,update]
