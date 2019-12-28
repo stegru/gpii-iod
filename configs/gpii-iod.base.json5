@@ -1,5 +1,5 @@
 {
-    "type": "gpii.iod.config.base",
+    "type": "gpii.iodServer.config.base",
     "options": {
         "components": {
             "iodServer": {
@@ -7,18 +7,18 @@
                 "options": {
                     "components": {
                         "packageServer": {
-                            "type": "gpii.iod.packageServer"
+                            "type": "gpii.iodServer.packageServer"
                         }
                     }
                 }
             },
             "adminSite": {
-                "type": "gpii.iod.admin"
+                "type": "gpii.iodServer.admin"
             }
         },
         "distributeOptions": {
             "packageDataSource": {
-                target: "{that gpii.iod.packageDataSource}.options.packageDirectory",
+                target: "{that gpii.iodServer.packageDataSource}.options.packageDirectory",
                 record: "%gpii-iod-server/testData/packages"
             }
         }

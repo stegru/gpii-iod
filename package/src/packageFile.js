@@ -21,17 +21,17 @@
 var fluid = fluid || require("infusion");
 
 var gpii = fluid.registerNamespace("gpii");
-fluid.registerNamespace("gpii.iod.packageFile");
+fluid.registerNamespace("gpii.iodServer.packageFile");
 
 var fs = require("fs"),
     path = require("path"),
     crypto = require("crypto"),
     util = require("util");
 
-gpii.iod.packageFile.fileIdentity = "gpii-iod-package-v1\0";
+gpii.iodServer.packageFile.fileIdentity = "gpii-iod-package-v1\0";
 
 // file-id + 3x 32bit lengths (for packageData, signature, and installation file)
-gpii.iod.packageFile.headerLength = gpii.iod.packageFile.fileIdentity.length + 3 * 4;
+gpii.iodServer.packageFile.headerLength = gpii.iodServer.packageFile.fileIdentity.length + 3 * 4;
 
 /**
  * @typedef Key {Object}
@@ -47,7 +47,7 @@ gpii.iod.packageFile.headerLength = gpii.iod.packageFile.fileIdentity.length + 3
  * @param {String} algorithm [optional] The algorithm. [default: sha512]
  * @return {Promise<Buffer>} Resolves with the hash.
  */
-gpii.iod.packageFile.hashFile = function (file, algorithm) {
+gpii.iodServer.packageFile.hashFile = function (file, algorithm) {
     var promise = fluid.promise();
     if (!algorithm) {
         algorithm = "sha512";
@@ -84,7 +84,7 @@ gpii.iod.packageFile.hashFile = function (file, algorithm) {
  * @param {String} installerFile Path to the installer file.
  * @return {Promise<PackageData>} Resolves with the new package data object.
  */
-gpii.iod.packageFile.preparePackageData = function (packageData, installerFile) {
+gpii.iodServer.packageFile.preparePackageData = function (packageData, installerFile) {
     var installerFileStats;
     var hashPromise;
     packageData = fluid.copy(packageData);
@@ -94,7 +94,7 @@ gpii.iod.packageFile.preparePackageData = function (packageData, installerFile) 
     // Get the hash of the installation
     if (installerFile) {
         installerFileStats = fs.statSync(installerFile);
-        hashPromise = gpii.iod.packageFile.hashFile(installerFile);
+        hashPromise = gpii.iodServer.packageFile.hashFile(installerFile);
     } else {
         hashPromise = fluid.toPromise(undefined);
     }
@@ -162,7 +162,7 @@ gpii.iod.packageFile.preparePackageData = function (packageData, installerFile) 
  * @param {String} pem The PEM encoded key.
  * @return {Buffer} Returns a buffer containing the key. null if the PEM is invalid.
  */
-gpii.iod.packageFile.readPEM = function (pem) {
+gpii.iodServer.packageFile.readPEM = function (pem) {
     // Extract the base64 encoding from the PEM - that is, anything between the "-----BEGIN *" and -----END *" lines.
 
     // eslint complains about the 's' flag if it's a literal regex.
@@ -180,12 +180,12 @@ gpii.iod.packageFile.readPEM = function (pem) {
  * @param {Key} key Object containing the public and private key.
  * @return {Object} Returns an object containing the packageJson and signature.
  */
-gpii.iod.packageFile.signPackageData = function (packageData, key) {
+gpii.iodServer.packageFile.signPackageData = function (packageData, key) {
     var togo = {};
     var data = fluid.copy(packageData);
 
     // Include the public key used to sign this package.
-    data.publicKey = gpii.iod.packageFile.readPEM(key.publicKey).toString("base64");
+    data.publicKey = gpii.iodServer.packageFile.readPEM(key.publicKey).toString("base64");
 
     // Sign the package data
     var packageJson = JSON.stringify(data);
@@ -207,7 +207,7 @@ gpii.iod.packageFile.signPackageData = function (packageData, key) {
  * @param {String} saveAs The path of the new package file.
  * @return {Promise} Resolves when complete.
  */
-gpii.iod.packageFile.create = function (packageDataFile, installerFile, key, saveAs) {
+gpii.iodServer.packageFile.create = function (packageDataFile, installerFile, key, saveAs) {
 
     var promise = fluid.promise();
 
@@ -216,18 +216,18 @@ gpii.iod.packageFile.create = function (packageDataFile, installerFile, key, sav
         ? packageDataFile
         : JSON.parse(fs.readFileSync(packageDataFile, "utf8"));
 
-    var packageDataPromise = gpii.iod.packageFile.preparePackageData(origPackageData, installerFile);
+    var packageDataPromise = gpii.iodServer.packageFile.preparePackageData(origPackageData, installerFile);
 
     packageDataPromise.then(function (packageData) {
-        var signedPackageData = gpii.iod.packageFile.signPackageData(packageData, key);
+        var signedPackageData = gpii.iodServer.packageFile.signPackageData(packageData, key);
 
         // Initial file buffer contains the header, package data, and signature.
         var packageBuffer = Buffer.alloc(
-            gpii.iod.packageFile.headerLength + signedPackageData.buffer.length + signedPackageData.signature.length);
+            gpii.iodServer.packageFile.headerLength + signedPackageData.buffer.length + signedPackageData.signature.length);
 
         // Create the header
         var offset = 0;
-        offset += packageBuffer.write(gpii.iod.packageFile.fileIdentity, "ascii");
+        offset += packageBuffer.write(gpii.iodServer.packageFile.fileIdentity, "ascii");
         offset = packageBuffer.writeUInt32LE(signedPackageData.buffer.length, offset);
         offset = packageBuffer.writeUInt32LE(signedPackageData.signature.length, offset);
         offset = packageBuffer.writeUInt32LE(packageData.installerSize, offset);
@@ -289,7 +289,7 @@ gpii.iod.packageFile.create = function (packageDataFile, installerFile, key, sav
  *      The position will be at the beginning of the installer payload.
  * @return {Promise<PackageFileInfo>} A promise resolving when the file has been read and parsed.
  */
-gpii.iod.packageFile.read = function (packageFile, options) {
+gpii.iodServer.packageFile.read = function (packageFile, options) {
     if (!options) {
         options = {};
     }
@@ -307,11 +307,11 @@ gpii.iod.packageFile.read = function (packageFile, options) {
 
         var work = [
             // Read the header
-            gpii.iod.packageFile.readHeader,
+            gpii.iodServer.packageFile.readHeader,
             // Get the package data and its signature
-            gpii.iod.packageFile.readPackageData,
+            gpii.iodServer.packageFile.readPackageData,
             // Check the data and signature
-            gpii.iod.packageFile.verifyPackageData
+            gpii.iodServer.packageFile.verifyPackageData
         ];
 
         var closeFile = function () {
@@ -339,9 +339,9 @@ gpii.iod.packageFile.read = function (packageFile, options) {
  * @param {PackageFileInfo} packageFileInfo Current information about the package file (gets modified).
  * @return {Promise<PackageFileInfo>} A promise resolving when the header has been read.
  */
-gpii.iod.packageFile.readHeader = function (packageFileInfo) {
+gpii.iodServer.packageFile.readHeader = function (packageFileInfo) {
     var promise = fluid.promise();
-    var buffer = Buffer.alloc(gpii.iod.packageFile.headerLength);
+    var buffer = Buffer.alloc(gpii.iodServer.packageFile.headerLength);
 
     fs.read(packageFileInfo.fd, buffer, 0, buffer.length, null, function (err, bytesRead) {
         if (err) {
@@ -358,8 +358,8 @@ gpii.iod.packageFile.readHeader = function (packageFileInfo) {
             var intSize = 4;
             var header = packageFileInfo.header = {};
 
-            header.identity = buffer.toString("ascii", offset, gpii.iod.packageFile.fileIdentity.length);
-            if (header.identity === gpii.iod.packageFile.fileIdentity) {
+            header.identity = buffer.toString("ascii", offset, gpii.iodServer.packageFile.fileIdentity.length);
+            if (header.identity === gpii.iodServer.packageFile.fileIdentity) {
                 offset += header.identity.length;
 
                 header.packageDataLength = buffer.readUInt32LE(offset);
@@ -389,7 +389,7 @@ gpii.iod.packageFile.readHeader = function (packageFileInfo) {
  * @param {PackageFileInfo} packageFileInfo Current information about the package file (gets modified).
  * @return {Promise<PackageFileInfo>} A promise resolving when the package data has been read.
  */
-gpii.iod.packageFile.readPackageData = function (packageFileInfo) {
+gpii.iodServer.packageFile.readPackageData = function (packageFileInfo) {
     var promise = fluid.promise();
 
     var buffer = Buffer.alloc(packageFileInfo.header.packageDataLength + packageFileInfo.header.signatureLength);
@@ -439,7 +439,7 @@ gpii.iod.packageFile.readPackageData = function (packageFileInfo) {
  * @param {PackageFileInfo} packageFileInfo Current information about the package file (gets modified).
  * @return {Promise<PackageFileInfo>} A promise resolving when the signature has been checked.
  */
-gpii.iod.packageFile.verifyPackageData = function (packageFileInfo) {
+gpii.iodServer.packageFile.verifyPackageData = function (packageFileInfo) {
     var promise = fluid.promise();
 
     // Verify the package data with the signature.

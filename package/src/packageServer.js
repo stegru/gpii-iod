@@ -33,7 +33,7 @@ fluid.registerNamespace("gpii.iod");
  * @property {Boolean} installer true if there's an installer file available.
  */
 
-fluid.defaults("gpii.iod.packageServer", {
+fluid.defaults("gpii.iodServer.packageServer", {
     gradeNames: "kettle.app",
     serverUrl: "http://localhost",
 
@@ -41,29 +41,29 @@ fluid.defaults("gpii.iod.packageServer", {
         packages: {
             route: "/packages/:packageName",
             method: "get",
-            type: "gpii.iod.packageServer.packagesRequest"
+            type: "gpii.iodServer.packageServer.packagesRequest"
         },
         installer: {
             route: "/installer/:packageName",
             method: "get",
-            type: "gpii.iod.packageServer.installerRequest"
+            type: "gpii.iodServer.packageServer.installerRequest"
         }
     },
     components: {
         "packageDataSource": {
-            type: "gpii.iod.packageDataSource",
+            type: "gpii.iodServer.packageDataSource",
             options: {
-                "readOnlyGrade": "gpii.iod.packageDataSource"
+                "readOnlyGrade": "gpii.iodServer.packageDataSource"
             }
         }
     }
 });
 
-fluid.defaults("gpii.iod.packageServer.packagesRequest", {
+fluid.defaults("gpii.iodServer.packageServer.packagesRequest", {
     gradeNames: ["kettle.request.http"],
     invokers: {
         handleRequest: {
-            funcName: "gpii.iod.packageServer.handleRequest",
+            funcName: "gpii.iodServer.packageServer.handleRequest",
             args: [
                 "{packageServer}", "{request}", "{request}.req.params.packageName", "{request}.req.params.lang"
             ]
@@ -71,11 +71,11 @@ fluid.defaults("gpii.iod.packageServer.packagesRequest", {
     }
 });
 
-fluid.defaults("gpii.iod.packageServer.installerRequest", {
+fluid.defaults("gpii.iodServer.packageServer.installerRequest", {
     gradeNames: ["kettle.request.http"],
     invokers: {
         handleRequest: {
-            funcName: "gpii.iod.packageServer.getInstaller",
+            funcName: "gpii.iodServer.packageServer.getInstaller",
             args: [
                 "{packageServer}", "{request}", "{request}.req.params.packageName", "{request}.req.params.lang"
             ]
@@ -86,11 +86,11 @@ fluid.defaults("gpii.iod.packageServer.installerRequest", {
 /**
  * Handles /packages requests. Responds with a {PackageResponse} for the given package.
  *
- * @param {Component} packages The gpii.iod.packageServer instance.
- * @param {Component} request The gpii.iod.packageServer.packagesRequest for this request.
+ * @param {Component} packages The gpii.iodServer.packageServer instance.
+ * @param {Component} request The gpii.iodServer.packageServer.packagesRequest for this request.
  * @param {String} packageName Name of the requested package.
  */
-gpii.iod.packageServer.handleRequest = function (packages, request, packageName) {
+gpii.iodServer.packageServer.handleRequest = function (packages, request, packageName) {
     fluid.log("package requested: " + packageName);
     packages.packageDataSource.get({packageName: packageName}).then(function (packageInfo) {
         /** @type PackageResponse */
@@ -115,11 +115,11 @@ gpii.iod.packageServer.handleRequest = function (packages, request, packageName)
 /**
  * Handles /installer requests. Responds with the installer binary, for the given package.
  *
- * @param {Component} packages The gpii.iod.packageServer instance.
- * @param {Component} request The gpii.iod.packageServer.installerRequest for this request.
+ * @param {Component} packages The gpii.iodServer.packageServer instance.
+ * @param {Component} request The gpii.iodServer.packageServer.installerRequest for this request.
  * @param {String} packageName Name of the requested package.
  */
-gpii.iod.packageServer.getInstaller = function (packages, request, packageName) {
+gpii.iodServer.packageServer.getInstaller = function (packages, request, packageName) {
     fluid.log("installer requested: " + packageName);
     packages.packageDataSource.get({packageName: packageName}).then(function (packageInfo) {
 

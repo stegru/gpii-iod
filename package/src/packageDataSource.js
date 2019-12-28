@@ -24,11 +24,11 @@ var fs = require("fs"),
     path = require("path");
 
 var gpii = fluid.registerNamespace("gpii");
-fluid.registerNamespace("gpii.iod.packageData");
+fluid.registerNamespace("gpii.iodServer.packageData");
 
-fluid.defaults("gpii.iod.packageDataSource", {
+fluid.defaults("gpii.iodServer.packageDataSource", {
     gradeNames: ["kettle.dataSource"],
-    readOnlyGrade: "gpii.iod.packageDataSource",
+    readOnlyGrade: "gpii.iodServer.packageDataSource",
 
     invokers: {
         getImpl: {
@@ -36,15 +36,15 @@ fluid.defaults("gpii.iod.packageDataSource", {
             args: ["{arguments}.1.packageName"]
         },
         getPackageFile: {
-            funcName: "gpii.iod.packageData.getPackageFile",
+            funcName: "gpii.iodServer.packageData.getPackageFile",
             args: ["{that}", "{arguments}.0"] // packageName
         },
         addPackageFile: {
-            funcName: "gpii.iod.packageData.addPackageFile",
+            funcName: "gpii.iodServer.packageData.addPackageFile",
             args: ["{that}", "{arguments}.0"] // packageFile
         },
         loadPackages: {
-            funcName: "gpii.iod.packageData.loadPackages",
+            funcName: "gpii.iodServer.packageData.loadPackages",
             args: ["{that}", "{that}.options.packageDirectory"]
         }
     },
@@ -66,24 +66,24 @@ fluid.defaults("gpii.iod.packageDataSource", {
 /**
  * Gets a package file, using the name of the package.
  *
- * @param {Component} that The gpii.iod.packageDataSource instance.
+ * @param {Component} that The gpii.iodServer.packageDataSource instance.
  * @param {String} packageName The name of the package.
  * @return {Promise<PackageFileInfo>} Resolves with the package file info.
  */
-gpii.iod.packageData.getPackageFile = function (that, packageName) {
+gpii.iodServer.packageData.getPackageFile = function (that, packageName) {
     return fluid.toPromise(that.packages[packageName]);
 };
 
 /**
  * Adds a file to the list of loaded packages.
  *
- * @param {Component} that The gpii.iod.packageDataSource instance.
+ * @param {Component} that The gpii.iodServer.packageDataSource instance.
  * @param {String} packageFile The package file to add.
  * @return {Promise} Resolves when the package file has been read.
  */
-gpii.iod.packageData.addPackageFile = function (that, packageFile) {
+gpii.iodServer.packageData.addPackageFile = function (that, packageFile) {
     fluid.log("Loading package file: " + packageFile);
-    return gpii.iod.packageFile.read(packageFile).then(function (packageFileInfo) {
+    return gpii.iodServer.packageFile.read(packageFile).then(function (packageFileInfo) {
         that.packages[packageFileInfo.packageData.name] = packageFileInfo;
     });
 };
@@ -91,11 +91,11 @@ gpii.iod.packageData.addPackageFile = function (that, packageFile) {
 /**
  * Loads all package files from a directory (and subdirectories).
  *
- * @param {Component} that The gpii.iod.packageDataSource instance.
+ * @param {Component} that The gpii.iodServer.packageDataSource instance.
  * @param {String} packageDirectory The directory containing the package files.
  * @return {Promise<Array<Error>>} Resolves with an array of errors when all files have been loaded.
  */
-gpii.iod.packageData.loadPackages = function (that, packageDirectory) {
+gpii.iodServer.packageData.loadPackages = function (that, packageDirectory) {
     var promise = fluid.promise();
 
     packageDirectory = fluid.module.resolvePath(packageDirectory);
@@ -124,7 +124,7 @@ gpii.iod.packageData.loadPackages = function (that, packageDirectory) {
                         });
                     } else if (stats.isDirectory()) {
                         // Load the subdirectory.
-                        addPromise = gpii.iod.packageData.loadPackages(that, file).then(function (value) {
+                        addPromise = gpii.iodServer.packageData.loadPackages(that, file).then(function (value) {
                             result.push.apply(result, value);
                         });
                     } else {

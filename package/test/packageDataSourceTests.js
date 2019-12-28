@@ -84,7 +84,7 @@ jqUnit.asyncTest("loadPackages, addPackage, getPackage", function () {
             fs.writeFileSync(file, "bad package:" + name);
         } else {
             expectedPackages.push(name);
-            packagePromises.push(gpii.iod.packageFile.create({
+            packagePromises.push(gpii.iodServer.packageFile.create({
                 name: name
             }, null, gpii.tests.iod.packageData.testKey, file));
         }
@@ -94,7 +94,7 @@ jqUnit.asyncTest("loadPackages, addPackage, getPackage", function () {
 
     fluid.promise.sequence(packagePromises).then(function () {
         // Test data has been created - try to load it.
-        var packageDataSource = gpii.iod.packageDataSource({packageDirectory: tempDir});
+        var packageDataSource = gpii.iodServer.packageDataSource({packageDirectory: tempDir});
         packageDataSource.loadPackages().then(function () {
             var packageNames = Object.keys(packageDataSource.packages);
 

@@ -1,5 +1,5 @@
 {
-    "type": "gpii.iod.config.dev",
+    "type": "gpii.iodServer.config.dev",
     "options": {
         "gradeNames": ["fluid.component"],
         "distributeOptions": {

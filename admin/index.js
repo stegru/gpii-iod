@@ -32,7 +32,7 @@ var expressSession = require("express-session");
 var MemoryStore = require("memorystore")(expressSession);
 
 
-fluid.defaults("gpii.iod.admin", {
+fluid.defaults("gpii.iodServer.admin", {
     gradeNames: ["gpii.express"],
     components: {
         hb: {
@@ -62,7 +62,7 @@ fluid.defaults("gpii.iod.admin", {
                     maxAge: 10,
                     store: {
                         expander: {
-                            funcName: "gpii.iod.admin.sessionStore",
+                            funcName: "gpii.iodServer.admin.sessionStore",
                             args: [{
                                 checkPeriod: 3.6e+6, // 1 hour
                                 //ttl: 1.8e+6, // 30 mins
@@ -85,7 +85,7 @@ fluid.defaults("gpii.iod.admin", {
         },
 
         login: {
-            type: "gpii.iod.admin.loginHandler",
+            type: "gpii.iodServer.admin.loginHandler",
             options: {
                 path: "/login",
                 method: [ "get", "post" ],
@@ -100,16 +100,16 @@ fluid.defaults("gpii.iod.admin", {
 });
 
 // General request handler
-fluid.defaults("gpii.iod.admin.middleware", {
+fluid.defaults("gpii.iodServer.admin.middleware", {
     gradeNames: ["gpii.handlebars.dispatcherMiddleware"],
     templateDirs: ["%gpii-iod-server-admin/client/templates"],
     invokers: {
         middleware: {
-            funcName: "gpii.iod.admin.handleRequest",
+            funcName: "gpii.iodServer.admin.handleRequest",
             args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2" ]
         },
         checkAuth: {
-            funcName: "gpii.iod.admin.middleware.checkAuth",
+            funcName: "gpii.iodServer.admin.middleware.checkAuth",
             args: ["{that}", "{arguments}.0", "{arguments}.1" ] // req, res.
         }
     }
@@ -122,7 +122,7 @@ fluid.defaults("gpii.iod.admin.middleware", {
  * @param {Request} req The request.
  * @param {Response} res The response.
  */
-gpii.iod.admin.middleware.checkAuth = function (that, req, res) {
+gpii.iodServer.admin.middleware.checkAuth = function (that, req, res) {
     var authorised = that.options.noAuth || req.session.loggedIn;
     if (!authorised) {
         res.status(303).redirect("/login");
@@ -138,7 +138,7 @@ gpii.iod.admin.middleware.checkAuth = function (that, req, res) {
  * @param {Response} res The response.
  * @param {Function} next Next middleware function
  */
-gpii.iod.admin.handleRequest = function (that, req, res, next) {
+gpii.iodServer.admin.handleRequest = function (that, req, res, next) {
     var authorised = that.checkAuth(req, res);
 
     var handlerPromise;
@@ -178,7 +178,7 @@ gpii.iod.admin.handleRequest = function (that, req, res, next) {
  * @param {Object} options Options for memorystore.
  * @return {MemoryStore} The session storage.
  */
-gpii.iod.admin.sessionStore = function (options) {
+gpii.iodServer.admin.sessionStore = function (options) {
     return new MemoryStore(options);
 };
 
