@@ -30,7 +30,7 @@ fluid.registerNamespace("gpii.iod");
  * @typedef PackageResponse {Object}
  * @property {String} packageData The package data (as a JSON string)
  * @property {String} packageDataSignature The signature of the packageData (base64 encoded)
- * @property {Boolean} installer true if there's an installer file available.
+ * @property {String} installer The location of the installer.
  */
 
 fluid.defaults("gpii.iodServer.packageServer", {
