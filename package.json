@@ -10,7 +10,7 @@
         "gpii-express": "^1.0.15",
         "gpii-handlebars": "^1.1.4",
         "infusion": "3.0.0-dev.20180222T160835Z.6e1311a",
-        "json5": "^2.1.0",
+        "json5": "^2.2.2",
         "kettle": "^1.11.0",
         "memorystore": "^1.6.1"
     },
