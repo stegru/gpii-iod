@@ -8,7 +8,7 @@
     "dependencies": {
         "express-session": "^1.16.2",
         "gpii-express": "^1.0.15",
-        "gpii-handlebars": "^1.1.4",
+        "gpii-handlebars": "^2.1.2",
         "infusion": "3.0.0-dev.20180222T160835Z.6e1311a",
         "json5": "^2.1.0",
         "kettle": "^1.11.0",
